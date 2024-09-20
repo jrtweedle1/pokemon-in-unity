@@ -17,8 +17,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once every frame
     void Update()
     {
-        isMoving = true;
-
         // Ensures new input is only processed when the player has finished moving
         if (!isMoving)
         {
@@ -32,9 +30,11 @@ public class PlayerController : MonoBehaviour
                 // Capturing the target position to which the player should move
                 var targetPos = transform.position;
                 targetPos.x += input.x;
-                targetPos.y += = input.y;
+                targetPos.y += input.y;
 
+                // Start moving the player and set isMoving to true to prevent further input until movement is complete
                 StartCoroutine(Move(targetPos));
+                isMoving = true;
             }
         }
     }
@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator Move(Vector3 targetPos)
     {
         // While there is still a significant distance between the current position and the target position...
-        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon); //sqrMagnitude avoids the computational cost of actual magnitude due to square root
+        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon) //sqrMagnitude avoids the computational cost of actual magnitude due to square root
         {
             // Move towards the target position at a fixed speed (built-in Unity function) from current position of transform.position to that target position of targetPos
             // moveSpeed = value that can be set in the Unity Inspector
