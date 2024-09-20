@@ -5,17 +5,58 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed;
-    public bool isMoving;
+    private bool isMoving; // private to prevent input when the player is already moving
+    private Vector2 input;
 
-    // Start is called before the first frame update
+    // Start is called before the first frame update, when the game object is created
     void Start()
     {
-        
+
     }
 
-    // Update is called once per frame
+    // Update is called once every frame
     void Update()
     {
-        
+        isMoving = true;
+
+        // Ensures new input is only processed when the player has finished moving
+        if (!isMoving)
+        {
+            // Capturing input from the player
+            // GetAxisRaw provides values of -1, 0, or 1 based on input
+            input.x = Input.GetAxisRaw("Horizontal");
+            input.y = Input.GetAxisRaw("Vertical");
+
+            // Calculates new target position if player is not standing still
+            if (input != Vector2.zero) {
+                // Capturing the target position to which the player should move
+                var targetPos = transform.position;
+                targetPos.x += input.x;
+                targetPos.y += = input.y;
+
+                StartCoroutine(Move(targetPos));
+            }
+        }
+    }
+
+    // Special function with IEnumerator as a return type; coroutine handles movement over time that span multiple frames
+    // Examples: smooth movements, animations, or timed events
+    IEnumerator Move(Vector3 targetPos)
+    {
+        // While there is still a significant distance between the current position and the target position...
+        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon); //sqrMagnitude avoids the computational cost of actual magnitude due to square root
+        {
+            // Move towards the target position at a fixed speed (built-in Unity function) from current position of transform.position to that target position of targetPos
+            // moveSpeed = value that can be set in the Unity Inspector
+            // Time.deltaTime =  amount of time in seconds that has passed since last frame; ensures that movement is frame-rate independent
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+
+            // Pause the execution here and resume in the next frame, when Update is called again
+            yield return null;
+        }
+
+        // Ensure the player ends exactly at the target position
+        transform.position = targetPos;
+        isMoving = false;
     }
 }
