@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed;
+    public float moveSpeed; // The default movement speed of the player
     private bool isMoving; // private to prevent input when the player is already moving
     private Vector2 input;
+    private Animator animator;
 
     // Start is called before the first frame update, when the game object is created
     void Start()
     {
+        // Find and assign the Animator component attached to the player
+        animator = GetComponent<Animator>();
 
     }
 
@@ -31,6 +34,9 @@ public class PlayerController : MonoBehaviour
 
             // Calculates new target position if player is not standing still
             if (input != Vector2.zero) {
+                // Set the movement values in the animator
+                animator.SetFloat("moveX", input.x);
+                animator.SetFloat("moveY", input.y);
                 // Capturing the target position to which the player should move
                 var targetPos = transform.position;
                 targetPos.x += input.x;
@@ -41,6 +47,9 @@ public class PlayerController : MonoBehaviour
                 isMoving = true;
             }
         }
+
+        // Set the boolean for isMoving in the animator
+        animator.SetBool("isMoving", isMoving);
     }
 
     // Special function with IEnumerator as a return type; coroutine handles movement over time that span multiple frames
