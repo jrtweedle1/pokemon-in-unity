@@ -25,6 +25,10 @@ public class PlayerController : MonoBehaviour
             input.x = Input.GetAxisRaw("Horizontal");
             input.y = Input.GetAxisRaw("Vertical");
 
+            // Removes diagonal movement; if x has an input, make the y input nonexistent/0
+            if (input.x != 0) input.y = 0;
+        
+
             // Calculates new target position if player is not standing still
             if (input != Vector2.zero) {
                 // Capturing the target position to which the player should move
