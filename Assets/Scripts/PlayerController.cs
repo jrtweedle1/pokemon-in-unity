@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed; // The default movement speed of the player
+    public LayerMask solidObjectsLayer;
     private bool isMoving; // private to prevent input when the player is already moving
     private Vector2 input;
     private Animator animator;
@@ -43,8 +44,10 @@ public class PlayerController : MonoBehaviour
                 targetPos.y += input.y;
 
                 // Start moving the player and set isMoving to true to prevent further input until movement is complete
+                if (IsWalkable(targetPos))
+                {
                 StartCoroutine(Move(targetPos));
-                isMoving = true;
+                }
             }
         }
 
@@ -56,6 +59,7 @@ public class PlayerController : MonoBehaviour
     // Examples: smooth movements, animations, or timed events
     IEnumerator Move(Vector3 targetPos)
     {
+        isMoving = true;
         // While there is still a significant distance between the current position and the target position...
         while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon) //sqrMagnitude avoids the computational cost of actual magnitude due to square root
         {
@@ -71,5 +75,14 @@ public class PlayerController : MonoBehaviour
         // Ensure the player ends exactly at the target position
         transform.position = targetPos;
         isMoving = false;
+    }
+
+    private bool IsWalkable(Vector3 targetPos)
+    {
+        if (Physics2D.OverlapCircle(targetPos, 0.1f, solidObjectsLayer) != null)
+        {
+            return false;
+        }
+        return true;
     }
 }
