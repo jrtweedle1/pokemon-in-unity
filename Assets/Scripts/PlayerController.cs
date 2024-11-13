@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed; // The default movement speed of the player
     public LayerMask solidObjectsLayer;
+    public LayerMask grassLayer;
     private bool isMoving; // private to prevent input when the player is already moving
     private Vector2 input;
     private Animator animator;
@@ -75,6 +76,8 @@ public class PlayerController : MonoBehaviour
         // Ensure the player ends exactly at the target position
         transform.position = targetPos;
         isMoving = false;
+
+        CheckForEncounters();
     }
 
     private bool IsWalkable(Vector3 targetPos)
@@ -84,5 +87,17 @@ public class PlayerController : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    private void CheckForEncounters ()
+    {
+        // Check if the tile to which the player move is a grass type
+        if (Physics2D.OverlapCircle(transform.position, 0.1f, grassLayer) != null)
+        {
+            if (Random.Range(1, 101) <= 10)
+            {
+                Debug.Log("Encountered a wild pokemon!");
+            }
+        }
     }
 }
